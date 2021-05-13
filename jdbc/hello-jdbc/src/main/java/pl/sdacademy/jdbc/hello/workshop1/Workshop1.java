@@ -1,5 +1,7 @@
 package pl.sdacademy.jdbc.hello.workshop1;
 
+import java.sql.*;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Workshop1 {
@@ -10,6 +12,21 @@ public class Workshop1 {
     }
 
     private static List<String> getCountries() {
-        throw new UnsupportedOperationException("TODO");
+        List<String> result = new LinkedList<>();
+        try (Connection connection
+                 = DriverManager.getConnection("jdbc:mysql://localhost:6306/world", "root", "example")) {
+            try (PreparedStatement preparedStatement
+                     = connection.prepareStatement("SELECT * FROM country WHERE continent = 'EUROPE' ORDER BY name;")) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while(resultSet.next()){
+                    result.add(resultSet.getString("Name"));
+                }
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return result;
     }
 }
